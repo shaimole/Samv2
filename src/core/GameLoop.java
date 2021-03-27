@@ -26,7 +26,6 @@ public class GameLoop {
 		
 		while (unprocessed >= frameCap) {
 			update();
-
 		}
 		
 		if (newToRender) {

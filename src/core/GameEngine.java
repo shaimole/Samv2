@@ -92,8 +92,14 @@ public class GameEngine implements Runnable {
 
 		GameLoop loop = new GameLoop(this);
 
-		while (!window.shouldClose()) {
+		while (!window.shouldClose() && !window.restart()) {
 			loop.run();
+		}
+		if (window.restart()) {
+			Entity.deleteAsset();
+			glfwTerminate();
+			
+			start();
 		}
 		
 		Entity.deleteAsset();

@@ -11,6 +11,11 @@ public class Transform {
 		scale = new Vector3f(1,1,1);
 	}
 	
+	public Transform(float x, float y) {
+		pos = new Vector3f(x,y,0);
+		scale = new Vector3f(1,1,1);
+	}
+	
 	public Matrix4f getProjection(Matrix4f target) {
 		target.translate(pos);
 		target.scale(scale);

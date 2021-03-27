@@ -34,10 +34,10 @@ public class Texture {
 		}
 	}
 
-	protected void finalize() throws Throwable {
+	/*protected void finalize() throws Throwable {
 		glDeleteTextures(id);
 		super.finalize();
-	}
+	}*/
 
 	public void bind(int sampler) {
 		if (sampler >= 0 && sampler <= 31) {

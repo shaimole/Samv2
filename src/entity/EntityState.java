@@ -1,11 +1,9 @@
 package entity;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import org.joml.Vector2f;
 
 import Io.Window;
+import entity.Player.Player;
 import render.Animation;
 import world.World;
 
@@ -17,9 +15,13 @@ public class EntityState {
 	private int id;
 	private float moveDuration = 0;
 	private float moveLock = 0;
-	private float timeRunning = 0;
-	private float[] timesToSpawn;
-	private Entity[] entitysToSpawn, entitysToSpawnReload;
+	private int[] timesToSpawn;
+	private Entity[] entitysToSpawn;
+	private boolean [] spawned;
+	
+	private int [] moveOn;
+	
+	private Vector2f movement = new Vector2f(0, 0);
 
 	
 	public EntityState(int id, Animation animation) {
@@ -31,12 +33,21 @@ public class EntityState {
 		return id;
 	}
 
-	public EntityState setEntitesSpawnOn(float[] times, Entity[] entities) {
+	public EntityState setEntitesSpawnOn(int[] times, Entity[] entities) {
 
 		if (times != null && entities != null) {
 			timesToSpawn = times;
 			entitysToSpawn = entities;
-			entitysToSpawnReload = entities;
+			spawned = new boolean[entities.length];
+		}
+
+		return this;
+	}
+	
+	public EntityState setMoveOn(int[] times) {
+
+		if (times != null) {
+			moveOn = times;
 		}
 
 		return this;
@@ -55,8 +66,6 @@ public class EntityState {
 	}
 
 	public void update(float delta, World world, Transform pos) {
-		System.out.println(timeRunning);
-		timeRunning += delta;
 		if (locked > 0.0) {
 			locked = locked - delta;
 		} else {
@@ -69,12 +78,16 @@ public class EntityState {
 		}
 		if (timesToSpawn != null) {
 			for (int i = 0; i < timesToSpawn.length; i++) {
-				if (timesToSpawn[i] - timeRunning == 0 && entitysToSpawn[i] != null) {
-				
+				if (this.getAnimation().getFrame() == timesToSpawn[i] && !spawned[i]) {
+
+					Entity n = entitysToSpawn[i].getNew();
+					spawned[i] = true;
 					entitysToSpawn[i].transform.pos.x += pos.pos.x;
 					entitysToSpawn[i].transform.pos.y += pos.pos.y;
-					world.addEntity(entitysToSpawn[i]);
-					entitysToSpawn[i] = entitysToSpawn[i].getNew();
+					entitysToSpawn[i].boundingBox.getCenter().set(entitysToSpawn[i].transform.pos.x,entitysToSpawn[i].transform.pos.y);
+					entitysToSpawn[i].boundingBox.getHalfExtend().set(new Vector2f(0.1f,0.1f));
+					world.addNewEntity(entitysToSpawn[i]);
+					entitysToSpawn[i] = n;
 				}
 			}
 		}
@@ -84,8 +97,7 @@ public class EntityState {
 	public void reset() {
 		locked = duration;
 		moveLock = moveDuration;
-		timeRunning = 0;
-		entitysToSpawn = entitysToSpawnReload;
+		spawned = new boolean[20];
 		animation.reset();
 	}
 
@@ -105,8 +117,22 @@ public class EntityState {
 		return animation;
 	}
 
-	protected Vector2f getMovement(Window window, float delta, Vector2f lastMove) {
-		return new Vector2f(0, 0);
+	public Vector2f getMovement(Window window, float delta, Vector2f lastMove, Player player) {
+		if (moveOn != null ) {
+			System.out.println(getAnimation().getFrame());
+			for(int i = 0; i < this.moveOn.length;i++) {
+				if(getAnimation().getFrame() == moveOn[i]) {
+					return movement;
+				}
+			}
+		}
+		
+		return new Vector2f(0,0);
+	}
+	
+	public EntityState setMovement(Vector2f movement ) {
+		this.movement = movement;
+		return this;
 	}
 
 }

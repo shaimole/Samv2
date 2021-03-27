@@ -19,6 +19,7 @@ public class Window {
 	private int width, height;
 	private boolean resized, fullscreen = false;
 	private Input input;
+	public boolean restart;
 
 	public Window() {
 		this.width = 640;
@@ -59,11 +60,11 @@ public class Window {
 		glfwMakeContextCurrent(windowPointer);
 	}
 
-	public void addCallbacks() {
-		glfwSetKeyCallback(windowPointer, (window, key, scancode, action, mods) -> {
+	public void addCallbacks(){
+		/*glfwSetKeyCallback(windowPointer, (window, key, scancode, action, mods) -> {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
 				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-		});
+		});*/
 	}
 
 	public Input getInput() {
@@ -116,6 +117,11 @@ public class Window {
 
 	public void update() {
 		glfwSwapBuffers(windowPointer);
+	}
+
+
+	public boolean restart() {
+		return restart;
 	}
 
 }

@@ -5,7 +5,7 @@ import org.joml.Vector2f;
 import core.Utils;
 
 public class AABB {
-	private Vector2f center, halfExtend;
+	public Vector2f center, halfExtend;
 
 	public AABB(Vector2f center, Vector2f halfExtend) {
 		this.center = center;
